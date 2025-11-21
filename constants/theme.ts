@@ -5,25 +5,74 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const primary = '#10b981';
+const secondary = '#14b8a6';
+const accentBlue = '#3b82f6';
+const accentPurple = '#8b5cf6';
+
+export const Spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
+};
+
+export const BorderRadius = {
+  sm: 4,
+  md: 8,
+  lg: 12,
+  xl: 16,
+  xxl: 24,
+};
+
+export const FontSizes = {
+  xs: 12,
+  sm: 14,
+  md: 16,
+  lg: 18,
+  xl: 20,
+  xxl: 24,
+  xxxl: 32,
+};
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
+    text: '#111827',
+    background: '#ffffff',
+    backgroundAlt: '#f9fafb',
+    primary,
+    secondary,
+    accentBlue,
+    accentPurple,
+    tint: primary,
     icon: '#687076',
     tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    tabIconSelected: primary,
+    card: '#ffffff',
+    cardBorder: '#e5e7eb',
+    error: '#ef4444',
+    favorite: '#ef4444', // Alias for error as used in login
+    accent: accentBlue,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
+    text: '#ffffff',
+    background: '#030712',
+    backgroundAlt: '#111827',
+    primary,
+    secondary,
+    accentBlue,
+    accentPurple,
+    tint: primary,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    tabIconSelected: primary,
+    card: '#111827',
+    cardBorder: '#374151',
+    error: '#ef4444',
+    favorite: '#ef4444',
+    accent: accentBlue,
   },
 };
 
