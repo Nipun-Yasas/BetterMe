@@ -70,7 +70,8 @@ const MUSCLE_IMAGES: Record<string, string[]> = {
 };
 
 // Helper to get a deterministic image based on exercise details
-const getExerciseImage = (item: ItemData) => {
+// Helper to get a deterministic image based on exercise details
+export const getExerciseImage = (item: ItemData) => {
     if (item.image) return item.image;
 
     // Normalize category/muscle to find matching images
@@ -96,6 +97,7 @@ export interface ItemData {
     type?: string;
     muscle?: string;
     equipment?: string;
+    instructions: string;
 }
 
 interface ItemCardProps {
@@ -135,7 +137,7 @@ export function ItemCard({ item, isFavorited, onToggleFavorite, onSelect }: Item
 
                 <View style={styles.categoryBadge}>
                     <Text style={styles.categoryText}>
-                        {item.category}
+                        {item.category.replace(/_/g, ' ')}
                     </Text>
                 </View>
             </View>

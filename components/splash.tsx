@@ -1,6 +1,6 @@
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 
 import { Colors } from '@/constants/theme';
@@ -11,9 +11,9 @@ interface SplashProps {
 
 export default function Splash({ onComplete }: SplashProps) {
   // Loading dots animation
-  const bounce1 = new Animated.Value(0);
-  const bounce2 = new Animated.Value(0);
-  const bounce3 = new Animated.Value(0);
+  const bounce1 = useRef(new Animated.Value(0)).current;
+  const bounce2 = useRef(new Animated.Value(0)).current;
+  const bounce3 = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.loop(
@@ -48,9 +48,9 @@ export default function Splash({ onComplete }: SplashProps) {
     >
       <View style={styles.center}>
         {/* Logo */}
-        <View style={styles.logoShadow}>
+        <View>
           <View style={styles.logoCircle}>
-            <MaterialCommunityIcons name="run" size={48} color={Colors.light.primary} />
+            <Feather name="activity" size={48} color={Colors.light.primary} />
           </View>
         </View>
 
@@ -62,7 +62,7 @@ export default function Splash({ onComplete }: SplashProps) {
         <View style={styles.featuresRow}>
           <View style={styles.feature}>
             <View style={styles.featureCircle}>
-              <MaterialCommunityIcons name="run" size={24} color={Colors.light.background} />
+              <Feather name="activity" size={24} color={Colors.light.background} />
             </View>
             <Text style={styles.featureText}>Exercise</Text>
           </View>

@@ -1,4 +1,6 @@
+import { ExerciseDetailsModal } from '@/components/ui/exercise-details-modal';
 import { ItemCard, ItemData } from '@/components/ui/item-card';
+import { SelectionModal } from '@/components/ui/selection-modal';
 import { BorderRadius, Colors, FontSizes, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
@@ -9,14 +11,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
-  Modal,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -60,6 +60,7 @@ function exerciseToItemData(exercise: Exercise): ItemData {
     type: exercise.type,
     muscle: exercise.muscle,
     equipment: exercise.equipment,
+    instructions: exercise.instructions,
   };
 }
 
@@ -73,10 +74,13 @@ export default function HomeScreen() {
   const [items, setItems] = useState<ItemData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   // Filter states
-  const [selectedMuscle, setSelectedMuscle] = useState('');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('');
+  const [selectedMuscle, setSelectedMuscle] = useState<string | null>(null);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
+  const [selectedExercise, setSelectedExercise] = useState<ItemData | null>(null);
+  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
 
   // Dropdown modal state
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -147,8 +151,8 @@ export default function HomeScreen() {
   };
 
   const handleSelectItem = (item: ItemData) => {
-    console.log('Selected item:', item.title);
-    // Navigate to details screen
+    setSelectedExercise(item);
+    setDetailsModalVisible(true);
   };
 
   return (
@@ -314,62 +318,19 @@ export default function HomeScreen() {
       </ScrollView>
 
       {/* Dropdown Modal */}
-      <Modal
+      <SelectionModal
         visible={dropdownVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={closeDropdown}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={closeDropdown}
-        >
-          <View style={[styles.dropdownContainer, { backgroundColor: colors.card }]}>
-            <View style={styles.dropdownHeader}>
-              <Text style={[styles.dropdownTitle, { color: colors.text }]}>
-                {dropdownType === 'muscle' && 'Select Muscle Group'}
-                {dropdownType === 'difficulty' && 'Select Difficulty Level'}
-              </Text>
-              <TouchableOpacity onPress={closeDropdown}>
-                <Feather name="x" size={24} color={colors.icon} />
-              </TouchableOpacity>
-            </View>
-            <FlatList
-              data={getDropdownData()}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => {
-                const isSelected =
-                  (dropdownType === 'muscle' && item.value === selectedMuscle) ||
-                  (dropdownType === 'difficulty' && item.value === selectedDifficulty);
-
-                return (
-                  <TouchableOpacity
-                    style={[
-                      styles.dropdownItem,
-                      { borderBottomColor: colors.cardBorder },
-                      isSelected && { backgroundColor: colors.backgroundAlt },
-                    ]}
-                    onPress={() => handleDropdownSelect(item.value)}
-                  >
-                    <Text style={[
-                      styles.dropdownItemText,
-                      { color: colors.text },
-                      isSelected && { color: colors.primary, fontWeight: '600' },
-                    ]}>
-                      {item.label}
-                    </Text>
-                    {isSelected && (
-                      <Feather name="check" size={20} color={colors.primary} />
-                    )}
-                  </TouchableOpacity>
-                );
-              }}
-              style={styles.dropdownList}
-            />
-          </View>
-        </TouchableOpacity>
-      </Modal>
+        onClose={closeDropdown}
+        title={dropdownType === 'muscle' ? 'Select Muscle Group' : 'Select Difficulty Level'}
+        data={getDropdownData()}
+        selectedValue={dropdownType === 'muscle' ? selectedMuscle : selectedDifficulty}
+        onSelect={handleDropdownSelect}
+      />
+      <ExerciseDetailsModal
+        visible={detailsModalVisible}
+        onClose={() => setDetailsModalVisible(false)}
+        item={selectedExercise}
+      />
     </View>
   );
 }
@@ -597,50 +558,5 @@ const styles = StyleSheet.create({
   filterButtonText: {
     fontSize: FontSizes.sm,
     fontWeight: '500',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: Spacing.lg,
-  },
-  dropdownContainer: {
-    width: '100%',
-    maxWidth: 400,
-    maxHeight: '70%',
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  dropdownHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  dropdownTitle: {
-    fontSize: FontSizes.lg,
-    fontWeight: '600',
-  },
-  dropdownList: {
-    maxHeight: 400,
-  },
-  dropdownItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-    borderBottomWidth: 1,
-  },
-  dropdownItemText: {
-    fontSize: FontSizes.md,
   },
 });

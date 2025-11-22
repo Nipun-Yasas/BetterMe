@@ -1,3 +1,4 @@
+import { ExerciseDetailsModal } from '@/components/ui/exercise-details-modal';
 import { ItemCard, ItemData } from '@/components/ui/item-card';
 import { Colors, FontSizes, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -15,14 +16,16 @@ export default function FavoritesScreen() {
   const colors = Colors[colorScheme ?? 'light'];
   const favorites = useAppSelector((state) => state.favorites.items);
   const dispatch = useAppDispatch();
+  const [selectedExercise, setSelectedExercise] = React.useState<ItemData | null>(null);
+  const [detailsModalVisible, setDetailsModalVisible] = React.useState(false);
 
   const handleToggleFavorite = (item: ItemData) => {
     dispatch(toggleFavorite(item));
   };
 
   const handleSelectItem = (item: ItemData) => {
-    console.log('Selected item:', item.title);
-    // Navigate to details screen
+    setSelectedExercise(item);
+    setDetailsModalVisible(true);
   };
 
   return (
@@ -84,7 +87,13 @@ export default function FavoritesScreen() {
           />
         )}
       </View>
-    </View>
+
+      <ExerciseDetailsModal
+        visible={detailsModalVisible}
+        onClose={() => setDetailsModalVisible(false)}
+        item={selectedExercise}
+      />
+    </View >
   );
 }
 
@@ -162,3 +171,4 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
 });
+
