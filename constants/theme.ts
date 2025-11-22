@@ -68,7 +68,7 @@ export const Colors = {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: primary,
-    card: '#111827',
+    card: '#1f2937',
     cardBorder: '#374151',
     error: '#ef4444',
     favorite: '#ef4444',

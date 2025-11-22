@@ -1,6 +1,6 @@
 import { BorderRadius, Colors, FontSizes, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { registerUser } from '@/store/slices/authSlice';
+import { registerUser } from '../../store/slices/authSlice';
 import { registerSchema } from '@/utils/validationSchemas';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
