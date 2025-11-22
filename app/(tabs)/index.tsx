@@ -1,8 +1,9 @@
 import { ItemCard, ItemData } from '@/components/ui/item-card';
 import { BorderRadius, Colors, FontSizes, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useAppSelector } from '@/hooks/useRedux';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { Exercise, exerciseService } from '@/services/api';
+import { toggleFavorite } from '@/store/slices/favoritesSlice';
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
@@ -66,7 +67,8 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { user } = useAppSelector((state) => state.auth);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const favorites = useAppSelector((state) => state.favorites.items);
+  const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<ItemData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -140,10 +142,8 @@ export default function HomeScreen() {
     }
   };
 
-  const handleToggleFavorite = (id: string) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
-    );
+  const handleToggleFavorite = (item: ItemData) => {
+    dispatch(toggleFavorite(item));
   };
 
   const handleSelectItem = (item: ItemData) => {
@@ -301,8 +301,8 @@ export default function HomeScreen() {
                   >
                     <ItemCard
                       item={item}
-                      isFavorited={favorites.includes(item.id)}
-                      onToggleFavorite={handleToggleFavorite}
+                      isFavorited={favorites.some((fav) => fav.id === item.id)}
+                      onToggleFavorite={() => handleToggleFavorite(item)}
                       onSelect={handleSelectItem}
                     />
                   </Animated.View>
