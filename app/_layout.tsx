@@ -13,7 +13,6 @@ import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { Provider } from 'react-redux';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { store } from '@/store';
 import { checkAuthStatus } from '@/store/slices/authSlice';
@@ -24,8 +23,10 @@ export const unstable_settings = {
   anchor: '(tabs)',
 };
 
+import { ThemeProvider as CustomThemeProvider, useTheme } from '@/context/ThemeContext';
+
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+  const { theme } = useTheme();
   const segments = useSegments();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -65,12 +66,12 @@ function RootLayoutNav() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={theme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
     </ThemeProvider>
   );
 }
@@ -78,7 +79,9 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <Provider store={store}>
-      <RootLayoutNav />
+      <CustomThemeProvider>
+        <RootLayoutNav />
+      </CustomThemeProvider>
     </Provider>
   );
 }
