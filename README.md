@@ -1,50 +1,178 @@
-# Welcome to your Expo app 👋
+# BetterMe
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+BetterMe is a React Native fitness app built with Expo and Expo Router.
+It includes authentication screens, an exercise discovery home screen powered by API Ninjas, favorites management, and light/dark theme support.
 
-## Get started
+## Tech Stack
 
-1. Install dependencies
+- Expo SDK 54
+- React Native 0.81
+- React 19
+- TypeScript
+- Expo Router (file-based navigation)
+- Redux Toolkit + React Redux
+- Formik + Yup (forms and validation)
+- AsyncStorage (auth/theme persistence)
+- react-native-reanimated (animations)
 
-   ```bash
-   npm install
-   ```
+## Features
 
-2. Start the app
+- Auth flow with route guarding
+   - Login and registration screens with Yup validation
+   - Auth status persisted in AsyncStorage
+   - Navigation guard redirects users between auth and app tabs
+- Exercise discovery
+   - Search by exercise name
+   - Filter by muscle group and difficulty
+   - Data fetched from the API Ninjas Exercises API
+- Favorites
+   - Save/remove exercises from favorites
+   - Dedicated favorites tab with details modal
+- Profile
+   - User summary card and basic stats
+   - Theme switch (light/dark)
+   - Logout button
 
-   ```bash
-   npx expo start
-   ```
+## Project Structure
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+app/
+   _layout.tsx            # Root providers, splash handling, auth guard
+   (auth)/                # Login/Register stack
+   (tabs)/                # Home/Favorites/Profile tabs
+components/
+   ui/                    # Reusable UI components (cards, modals, buttons, switch)
+config/
+   api.ts                 # API base URL and API key mapping
+context/
+   ThemeContext.tsx       # Theme state + persistence
+services/
+   api.ts                 # Exercise API service
+store/
+   index.ts               # Redux store
+   slices/
+      authSlice.ts         # Auth state + async auth helpers (currently mocked)
+      favoritesSlice.ts    # Favorites state
+utils/
+   validationSchemas.ts   # Yup schemas for auth forms
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Prerequisites
 
-## Learn more
+- Node.js 18+
+- npm 9+
+- Expo CLI tools via npx (no global install required)
 
-To learn more about developing your project with Expo, look at the following resources:
+## Environment Variables
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Create a .env file in the project root:
 
-## Join the community
+```bash
+API_KEY=your_api_ninjas_key_here
+```
 
-Join our community of developers creating universal apps.
+The value is read in app.config.js and exposed to the app as expo.extra.apiNinjasKey.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Get your key from: https://api-ninjas.com/api/exercises
+
+## Installation
+
+```bash
+npm install
+```
+
+## Running the App
+
+Start Metro:
+
+```bash
+npm run start
+```
+
+Platform-specific shortcuts:
+
+```bash
+npm run android
+npm run ios
+npm run web
+```
+
+## Available Scripts
+
+- npm run start: start Expo development server
+- npm run android: open Android target
+- npm run ios: open iOS target
+- npm run web: open web target
+- npm run lint: run Expo ESLint checks
+- npm run reset-project: reset boilerplate scaffold
+
+## Authentication Notes
+
+Current auth in store/slices/authSlice.ts is mocked for development:
+
+- loginUser and registerUser create local mock users/tokens
+- Token and user are saved in AsyncStorage
+- checkAuthStatus restores sessions on app launch
+
+To connect a real backend:
+
+1. Replace mocked login/register implementations with API calls
+2. Keep dispatching setCredentials on success
+3. Keep AsyncStorage persistence (or migrate to secure storage)
+4. Update error handling based on backend response format
+
+## API Notes
+
+- Exercises are fetched from:
+   - https://api.api-ninjas.com/v1/exercises
+- Optional query params used:
+   - name
+   - muscle
+   - difficulty
+- API key is sent as X-Api-Key header
+
+If API_KEY is missing or invalid, the Home screen will show an error state with retry.
+
+## Navigation Overview
+
+- Root stack in app/_layout.tsx
+   - (auth): unauthenticated routes
+   - (tabs): authenticated app routes
+- Tabs in app/(tabs)/_layout.tsx
+   - Home
+   - Favorites
+   - Profile
+
+## Theming
+
+- ThemeContext manages theme mode and persistence (user-theme key)
+- App honors light/dark styles through constants/theme.ts and navigation theme provider
+
+## Linting
+
+```bash
+npm run lint
+```
+
+## Roadmap Ideas
+
+- Replace mock auth with production API integration
+- Persist favorites to backend
+- Add workout plan builder and progress history
+- Add notifications and reminders
+- Improve profile settings actions (currently mostly UI placeholders)
+
+## Troubleshooting
+
+- App shows no exercises
+   - Verify .env exists and API_KEY is valid
+   - Restart Expo after changing .env
+- Stuck on splash/loading
+   - Check Metro logs for runtime errors
+   - Ensure dependencies are installed correctly
+- Theme/auth state looks stale
+   - Clear app storage and relaunch
+
+## License
+
+Add your preferred license here.
